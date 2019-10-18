@@ -5,5 +5,6 @@ The scatter plot simultes the Gapminder and shows the relationship between GDP P
 
 Run ```python3 -m http.server``` to start server
 
-![Alt text](img/gapminder.png?raw=true "Title")
+![Alt text](img/gapminder-all.png?raw=true "Title")
+![Alt text](img/gapminder-asia.png?raw=true "Title")
 
