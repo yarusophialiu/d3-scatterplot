@@ -59,7 +59,33 @@ g.append("g")
 	.attr("class", "x axis")
 	// tranform x axis from top to bottom
     .attr("transform", "translate(0," + height +")")
-    .call(xAxisCall);
+	.call(xAxisCall);
+
+var continents = ["europe", "asia", "americas", "africa"]
+var legend = g.append("g")
+// sit at bottom right
+	.attr("transform", "translate(" + (width - 10)+ 
+		"," + (height - 125) + ")")
+
+continents.forEach((continent, i) => {
+	var legendRow = legend.append("g")
+		// avoid overlap
+		.attr("transform", "translate(0, " + (i * 20) + ")")
+
+	legendRow.append("rect")
+		.attr("width", 10)
+		.attr("height", 10)
+		.attr("fill", continentColor(continent))
+	
+	legendRow.append("text")
+		.attr("x", -10)
+		.attr("y", 10)
+		.attr("text-anchor", "end")
+		.attr("text-transform", "capitalize")
+		.text(continent)
+})
+
+
 // Y Axis
 var yAxisCall = d3.axisLeft(y)
     .tickFormat(function(d){ return +d; });
