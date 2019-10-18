@@ -14,7 +14,9 @@ var g = d3.select("#chart-area")
 	.append("g")
 		.attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
 
-var time = 0
+var time = 0;
+var interval;
+var formattedData;
 
 // tooltip
 var tip = d3.tip().attr('class', 'd3-tip')
@@ -112,7 +114,7 @@ d3.json("data/data.json").then(function(data){
 	// console.log(data);
 
 	// clean data
-	const formattedData = data.map(year => {
+	formattedData = data.map(year => {
 		return year["countries"].filter(country => {
 			var dataExists = (country.income && country.life_exp)
 			return dataExists
@@ -124,19 +126,49 @@ d3.json("data/data.json").then(function(data){
 	})
 
 	 // Run the code every 0.1 second
-	 d3.interval(() => {
-		 // loop back at the end of the data
-		 time = (time < 214) ? time+1 : 0
-		 update(formattedData[time])
-	 }, 300)
-
 	// First run of the visualization
 	update(formattedData[0])
 })
 
+$("#play-button")
+	.on("click", () => {
+		var button = $(this)
+		// console.log("play ", button.text().valueOf() == "play".split(" ").join(""))
+		// if (button.text().split("").join("")  == "play") {
+			button.text("Pause")
+			interval = setInterval(step, 100)
+		// } else {
+		// 	button.text("Play")
+		// 	clearInterval(interval)
+		// }
+	})
+
+$("#continent-select")
+	.on("change", () => {
+		update(formattedData[time])
+	})
+	
+$("#reset-button")
+	.on("click", () => {
+		time = 0
+		update(formattedData[0])
+	})
+
+function step() {
+	time = (time < 214) ? time+1 : 0
+	update(formattedData[time])
+}
+
 function update(data) {
 	var t = d3.transition()
 		.duration(100)
+
+	var continent = $("#continent-select").val()
+	
+	var data = data.filter(d => {
+		if (continent == "all") { return true }
+		else { return d.continent == continent }
+	})
 
 	// join new data with old elements
 	var circles = g.selectAll("circle")
