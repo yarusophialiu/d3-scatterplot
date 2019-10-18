@@ -16,6 +16,18 @@ var g = d3.select("#chart-area")
 
 var time = 0
 
+// tooltip
+var tip = d3.tip().attr('class', 'd3-tip')
+	.html(d => { 
+		var text = "<strong>Country:</strong> <span style='color:red'>" + d.country + "</span><br>"
+		text += "<strong>Continent:</strong> <span style='color:red;text-transform:capitalize'>" + d.continent + "</span><br>"
+		text += "<strong>Life Expectancy:</strong> <span style='color:red'>" + d3.format(".2f")(d.life_exp) + "</span><br>"
+		text += "<strong>GDP Per Capital:</strong> <span style='color:red'>" + d3.format("$,.0f")(d.income) + "</span><br>"
+		text += "<strong>Country:</strong> <span style='color:red'>" + d3.format(",.0f")(d.population) + "</span><br>"
+		return text
+	})
+g.call(tip)
+
 // scales
 var x = d3.scaleLog()
 	.base(10)
@@ -116,7 +128,7 @@ d3.json("data/data.json").then(function(data){
 		 // loop back at the end of the data
 		 time = (time < 214) ? time+1 : 0
 		 update(formattedData[time])
-	 }, 100)
+	 }, 300)
 
 	// First run of the visualization
 	update(formattedData[0])
@@ -141,6 +153,8 @@ function update(data) {
 		.append("circle")
 		.attr("class", "enter")
 		.attr("fill", d => { return continentColor(d.continent) })
+		.on("mouseover", tip.show)
+		.on("mouseout", tip.hide)
 		.merge(circles)
 		.transition(t)
 			.attr("cy", d => { return y(d.life_exp) })
